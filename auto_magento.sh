@@ -24,22 +24,24 @@ genpass() {
 }
 
 
-VER_RAW=(`plesk bin aps -gp|grep magento -A2 -B1|grep -v Vendor|awk '{print $2}'`)
+##SELECTING LATEST MAGENTO APS PACKAGE VERSION AND ID
 
-##SELECTING LATEST WORDPRESS APS PACKAGE VERSION AND ID
 
-#echo ${VER_RAW[*]}
-#VER_LEN=${#VER_RAW[*]}
-#VER=()
-#for i in {0,$((VER_LEN/3)),1}; do VER=(${VER[@]} ${VER_RAW[$((i*3-1))]}); done
-#IFS=$'\n' sorted=($(sort <<<"${VER[*]}"))
-#LVC=${#sorted[*]}
-#LATEST_VER=${sorted[$((LVC-1))]}
-#echo latest version is $LATEST_VER >>/tmp/event_handler.log
-#LATEST_PACKAGE_ID=`plesk bin aps -gp|grep $LATEST_VER -B3|head -1|awk '{print $2}'`
-#echo latest package id is $LATEST_PACKAGE_ID >>/tmp/event_handler.log
 
-LATEST_PACKAGE_ID=9
+VER_RAW=(`plesk bin aps -gp|grep magento -A2 -B1|grep -v Vendor|grep -v Release|awk '{print $2}'`)
+
+echo ${VER_RAW[*]}
+VER_LEN=${#VER_RAW[*]}
+VER=()
+for i in {0,$((VER_LEN/3)),1}; do VER=(${VER[@]} ${VER_RAW[$((i*3-1))]}); done
+IFS=$'\n' sorted=($(sort <<<"${VER[*]}"))
+LVC=${#sorted[*]}
+LATEST_VER=${sorted[$((LVC-1))]}
+echo latest version is $LATEST_VER >>/tmp/event_handler.log
+LATEST_PACKAGE_ID=`plesk bin aps -gp|grep $LATEST_VER -B3|head -1|awk '{print $2}'`
+echo latest package id is $LATEST_PACKAGE_ID >>/tmp/event_handler.log
+
+#LATEST_PACKAGE_ID=9
 
 
 echo "domain ${NEW_DOMAIN_NAME}" >> /tmp/event_handler.log
